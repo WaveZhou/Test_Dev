@@ -25,7 +25,7 @@ from Check_Bill_Test.Institution.AbstractInstitution import AbstractInstitution
 from Check_Bill_Test.utils.Log_Record import Log
 from Check_Bill_Test.utils.MysqlProxy import MysqlProxy
 
-from Transform_FileName import Transform_FileName
+from Check_Bill_Test.utils.Transform_FileName import Transform_FileName
 
 settings = {
     'origin_path': r'D:\整理券商对账单\origin\收件日20220612 当天',

@@ -12,7 +12,7 @@ import os,datetime
 # print(time)
 
 str = '未匹配_Statement_106560--HKD--EQ_20211220.xlsx'
-from Transform_FileName import Transform_FileName
+from Check_Bill_Test.utils.Transform_FileName import Transform_FileName
 tf = Transform_FileName()
 res = tf.get_date(str)
 print(res)

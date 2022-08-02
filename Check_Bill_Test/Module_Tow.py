@@ -144,13 +144,6 @@ def add_to_statement_arrive(res_date: str, res_account_id: list, start_date=None
         belong = product_type['belong']
         account_type = product_type['type']
         # 先查询该记录在实到表中是否存在（id,文件名，起止日期，状态都一样），如果已存在，则不做操作，不存在则新增
-        # sql_query = 'SELECT file_name FROM jm_statement.statement_arrive WHERE id=%s AND start_date=%s AND end_date=%s AND file_name=%s AND `status`=%s'
-        # res_arrived = mp.get_one(sql_query, [account_id, res_date, res_date, file_or_rar, 1])
-        # if res_arrived is None:
-        #     sql_add = 'INSERT into statement_arrive (`id`,`start_date`,`end_date`,`file_name`,`status`) VALUES (%s,%s,%s,%s,1)'
-        #     mp.modify(sql_add, [account_id, res_date, res_date, file_or_rar])
-        # else:
-        #     pass
         # 把对账单拷贝到按产品分类和按券商分类，然后给对账单原始未知文件名前加上已处理_
         # 对应的券商信息表id，源对账单目录，源对账单文件名，对账单开始日期，对账单结束日期，目标对账单目录1 ，目标对账单目录2，目标对账单文件名，处理日期和时间，是否有效
         # if '-' in res_date

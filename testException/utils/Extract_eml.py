@@ -98,19 +98,21 @@ def parse_tencent_email_content_part(msg_part: Message):
         result_list.append(new_part_obj)
     return result_list
 
+
 def put_mail_cache(folder_name: str, uid: int, file_name: str, cache_bit: bytes):
-    #folder_name = folder_name.replace('/', '$$$')
+    # folder_name = folder_name.replace('/', '$$$')
     os.makedirs(os.path.join(folder_name, str(uid)), exist_ok=True)
     file_name = file_name.replace('\t', '').replace('\\', '').replace(':', '').replace('/', '')
     bit_out = open(os.path.join(folder_name, str(uid), file_name), 'wb')
     bit_out.write(cache_bit)
     bit_out.close()
 
+
 def __put_mail_text__(folder_name: str, mail_index: int, text: str, encoding='gb18030'):
-    #folder_name = folder_name.replace('/', '$$$')
+    # folder_name = folder_name.replace('/', '$$$')
     os.makedirs(os.path.join(folder_name, str(mail_index)), exist_ok=True)
     if os.path.exists(os.path.join(folder_name, str(mail_index), '__main__.txt')):
-        text_out = open(os.path.join( folder_name, str(mail_index), '__main__.txt'), 'a', encoding=encoding)
+        text_out = open(os.path.join(folder_name, str(mail_index), '__main__.txt'), 'a', encoding=encoding)
         try:
             text_out.write(text)
         except UnicodeEncodeError as u_error:
@@ -131,7 +133,8 @@ def __put_mail_text__(folder_name: str, mail_index: int, text: str, encoding='gb
             raise u_error
         text_out.close()
 
-def Get_Annex_Message(FilePath, Annex_Path,count):
+
+def Get_Annex_Message(FilePath, Annex_Path, count):
     global sum
     fp = open(FilePath, 'rb')  # 打开任意格式文件，通过email库来判断是否为eml文件
     data = fp.read()
@@ -210,7 +213,7 @@ def Get_Annex_Message(FilePath, Annex_Path,count):
                     obj_dict['name'] = 'NoName'
                 else:
                     pass
-                put_mail_cache (Annex_Path, count, obj_dict['name'], obj_dict['data'])
+                put_mail_cache(Annex_Path, count, obj_dict['name'], obj_dict['data'])
             elif obj_dict['content_disposition'] in (None, 'inline'):
                 if obj_dict.get('data', None) is None:
                     pass
@@ -226,12 +229,9 @@ def Get_Annex_Message(FilePath, Annex_Path,count):
                         pass
             else:
                 raise NotImplementedError('{}'.format(obj_dict))
-        #self.db.add(mail_detail)  # 前面没在detail数据库表里查出来，现在把它加进去
+        # self.db.add(mail_detail)  # 前面没在detail数据库表里查出来，现在把它加进去
     except Exception as e:
         print(e)
-
-
-
 
     return new_obj
     # msg = email.message_from_binary_file(data.decode(msg_data,'ignore'))
@@ -248,8 +248,9 @@ def Get_Annex_Message(FilePath, Annex_Path,count):
 
 # 递归文件夹下所有文件
 count = 0
-def List_Filepath(Eml_Path, Annex_Path):
 
+
+def List_Filepath(Eml_Path, Annex_Path):
     global count
     for parent, dirnames, filenames in os.walk(Eml_Path):  # 遍历文件夹
         for dirname in dirnames:  # 对文件夹进行递归
@@ -259,8 +260,7 @@ def List_Filepath(Eml_Path, Annex_Path):
         for filename in filenames:  # r对文件进行判断
             FilePath = os.path.join(parent, filename)
             res = FilePath.split(os.path.sep)[-2]
-            Get_Annex_Message(FilePath, Annex_Path ,res)
-
+            Get_Annex_Message(FilePath, Annex_Path, res)
 
 
 # 创建目的文件夹

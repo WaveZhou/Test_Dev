@@ -1,8 +1,9 @@
 # coding=utf-8
 import rarfile, os, re, shutil, zipfile
 from os import listdir
-
+#from OperateFile import *
 # _*_ coding: utf-8 _*_
+#from CheckBillBack.utils.Transform_FileName import Transform_FileName
 
 """
 @Author: Wave Zhou
@@ -12,7 +13,6 @@ from os import listdir
 # param(压缩包所在文件夹的dir，指定压缩包解压后存放文件的位置，要从压缩包中匹配出的文件的文件名数组)
 # return null
 # @author周浪
-# 可以考虑新增一个返回匹配个数的功能，不同券商账户实现类下的压缩包匹配出的文件个数应大于等于那个不同券商的初始设置数
 class BatchDecompression(object):
     def __int__(self):
         super(BatchDecompression, self)
@@ -23,29 +23,48 @@ class BatchDecompression(object):
         self.sample = sample
         self.flag = None
         self.valid_file_list = list()
+        self.origin_files = list()
         self.save_origin_other_files(sourcedir)
+        self.date = ''
 
     def save_origin_other_files(self, sourcedir):
         for file_or_rar in os.listdir(sourcedir):
             if os.path.isfile(os.path.join(sourcedir, file_or_rar)) and str(file_or_rar)[-3:] not in (
-            'rar', 'RAR', 'ZIP', 'zip'):
+                    'rar', 'RAR', 'ZIP', 'zip'):
+                self.origin_files.append(file_or_rar)
                 self.valid_file_list.append(file_or_rar)
 
-    def batchExt(self):
+    def batchExt(self,com_type=None,pwd=None):
         if len(self.sample) < 1:
             raise Exception('第三个参数数组不能为空')
         filenames = listdir(self.source)
         for file in filenames:
             if '行情' in file:
                 continue
+            if str(file)[-3:] not in ('rar', 'RAR', 'ZIP', 'zip') and str(file)[-2:] not in ['7z']:
+                continue
             path1 = os.path.join(self.source, file)
+            #tf = Transform_FileName()
+            #temp_date = tf.get_date(file)
+            # if temp_date != '' or temp_date is not None:
+            #     self.date = temp_date
             if file.endswith('rar'):
                 rf = rarfile.RarFile(path1)  # 待解压文件
-                rf.extractall(self.target)  # 解压指定文件路径
+                rf.extractall(self.target)
+                rf.close()# 解压指定文件路径
             elif file.endswith('zip'):
-                zf = zipfile.ZipFile(path1)
-                zf.extractall(self.target)
+                if pwd is None:
+                    zf = zipfile.ZipFile(path1)
+                    zf.extractall(self.target)
+                else:
+                    zf = zipfile.ZipFile(path1,'r')
+                    zf.extractall(self.target, pwd=pwd.encode('utf-8'))
                 zf.close()
+            elif file.endswith('7z'):
+                import py7zr
+                with py7zr.SevenZipFile(path1, mode='r') as z:
+                    z.extractall(self.target)
+                z.close()
         folders = listdir(self.target)
         if len(self.sample) == 1:
             pattern = r"" + self.sample[0]  # 指定匹配模板
@@ -68,9 +87,10 @@ class BatchDecompression(object):
     def recursion_search(self, folders, pattern):
         foders_tmp = folders[:]  # 为了避免数组中元素删除造成的指针跳位
         for fd in foders_tmp:
-            if fd.endswith('rar') or fd.endswith('zip'):
+            if fd.endswith('rar') or fd.endswith('zip') or fd.endswith('7z'):
                 if self.flag:
                     os.remove(os.path.join(self.target, fd))
+                    # rename_to_new_dir(os.path.join(self.target, fd),os.path.join(self.target),'已处理_'+str(fd),2,False)
                     folders.remove(fd)
                 continue
             elif os.path.isfile(os.path.join(self.target, fd)):
@@ -89,18 +109,12 @@ class BatchDecompression(object):
                 self.valid_file_list.append(fs)
                 shutil.move(os.path.join(path2, fs), os.path.join(self.target, fs))
 
-    # def judge_includedir(self,f):
-    #     temp = False
-    #     if os.path.isdir(os.path.join(self.target,f)):
-    #         temp = True
-    #     return temp
-    # def judge_includedir(self,folders):
-    #     temp = False
-    #     for f in folders:
-    #         if os.path.isdir(os.path.join(self.target,f)):
-    #             temp = True
-    #     return temp
-    # def deal_no_dir(self,files,pattern):
-    #     for f in files:
-    #         if  not (re.search(pattern, f) and re.search(pattern, f).group(0) == pattern):
-    #             os.remove(os.path.join(self.target,f))
+    def get_rename_file(self):
+        self.batchExt()
+        for file in os.listdir(self.target):
+            if file in self.valid_file_list:
+                if file not in self.origin_files:
+                    os.rename(os.path.join(self.target, file), os.path.join(self.target, self.date + file))
+
+if __name__ == '__main__':
+    bt = BatchDecompression('./','./','pdf')

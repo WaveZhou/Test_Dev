@@ -12,10 +12,10 @@ import re
 # print(result)
 from zipfile import ZipFile
 
-from Check_Bill_Test.utils.BatchDecompression import BatchDecompression
+from testException.utils.BatchDecompression import BatchDecompression
 
-bd = BatchDecompression(r'./yasuo/',r'./yasuo/',['盯市'])
-bd.batchExt()
+bd = BatchDecompression(r'./yasuo/',r'./yasuo/',['xml'])
+bd.batchExt(pwd='29202731')
 #name.encode('cp437').decode('gbk')
 # def support_gbk(zip_file: ZipFile):
 #     name_to_info = zip_file.NameToInfo

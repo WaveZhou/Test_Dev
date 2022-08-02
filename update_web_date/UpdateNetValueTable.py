@@ -95,6 +95,11 @@ class UpdateNetValueTable():
         self.con.modify(sql_perday_delenull, None)
 
     def update_performance_base(self):
+        """
+        把业绩基准表数据查询出来插入performance_base表
+        @:params None
+        :return None:
+        """
         sql_get = "SELECT * FROM `业绩基准表`"
         res_list = self.con.get_list(sql_get, None)
         store_list = list()
@@ -112,6 +117,12 @@ class UpdateNetValueTable():
         self.con.multiple_modify(sql_insert_performance, com_batch)
 
     def update_netvalue_gw(self, local_table, map_tabel):
+        """
+        更新官网数据库三张表净值
+        :param local_table: 本地相应频次的净值表
+        :param map_tabel: 官网数据库相应频次在本地库的映射表
+        :return: None
+        """
         sql_get_date = 'SELECT DISTINCT(`net_date`) FROM `{}` pn WHERE pn.net_date > (SELECT MAX(`net_date`) FROM `{}` )'.format(
             local_table, map_tabel)
         res_date_list = self.con.get_list(sql_get_date, None)
@@ -146,8 +157,8 @@ class UpdateNetValueTable():
 
 
 if __name__ == '__main__':
-    dict_obj_input = {'host': '127.0.0.1', 'user': 'root', 'passwd': '123456', 'db': 'jiuming_ta_new'}
-    dict_obj_wz = {'host': '121.40.107.3', 'user': 'jiuming2018', 'passwd': 'ByA3nFjspni2365e', 'db': 'jiuming2018'}
+    dict_obj_input = {}
+    dict_obj_wz = {}
     frequecy_table_list = ['perday_netvalue', 'perweek_netvalue', 'permonth_netvalue']
     unvt = UpdateNetValueTable(dict_obj_input, dict_obj_wz)
     for i in range(3):

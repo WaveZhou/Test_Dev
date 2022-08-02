@@ -76,14 +76,17 @@ class Transform_FileName(object):
 if __name__ == '__main__':
     # regex_str = '\d{4}[-/]?\d{2}[-/]?\d{2}'
     # subject = '0011000048久铭专享6号20220217.txt'
-    subject = '上海久铭投资管理有限公司－久铭1号私募证券投资基金_661026000005_股票期权对账单(人民币)_20220217.xls上海久铭投资管理有限公司－久铭1号私募证券投资基金_661026000005_股票期权对账单(人民币)_20220217.xls'
+    subject = '【113424】【久铭专享25号】-场外期权估值报表2022-07-01.xlsx'
     # subject = '8034648_21800127.pdf'
     tf = Transform_FileName()
     # subject = '0011000048久铭专享6号20220217.txt'
+    #【113424】【久铭专享25号】-场外期权估值报表2022-07-01.xlsx
     if tf.get_date(subject) == '':
         print("果然空窜")
     print(tf.get_date(subject))
     print(tf.get_filename_without_date(subject))
-
+    # sf = '  dfgsdg ewe gegfew  '
+    # sf.trip
+    # print(sf.strip().replace(" ",''))
 # 20220217的文件目录下，都是对账结束日为20220217的对账单【有的是解压后的子目录，需二次遍历，最终在这目录下都是这一天收盘后的对账单】
 # 遍历该文件夹下的所有文件，发现文件名能与act_suppose_arrive匹配的，就把该文件名记录到实到表。

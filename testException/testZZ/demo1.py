@@ -1,8 +1,8 @@
 # _*_ coding: utf-8 _*_
 import re,datetime
+from Check_Bill_Test.utils.Transform_FileName import Transform_FileName
 # line = "result of fold 0, instance 3.";
-#
-#
+
 # pattern = r'w*.[a-z]{5}.[a-z]*'
 # prog = re.compile(pattern)
 # string = 'www.baidu.com'
@@ -10,7 +10,7 @@ import re,datetime
 #
 # #print(pattern.group(0))
 # print(result)
-from Check_Bill_Test.utils.Transform_FileName import Transform_FileName
+
 
 # date  = datetime.datetime.now()
 # str = datetime.datetime.strftime(date,'%Y')
@@ -19,8 +19,9 @@ from Check_Bill_Test.utils.Transform_FileName import Transform_FileName
 str = '905-客户-股票期权客户对账单20220301-0331.xls'
 
 res = re.search( '\d{8}-\d{4}',str).group(0)
+print(res)
 begin_date = res[4:8]
-print(begin_date)
+print('开始日',begin_date)
 result = re.sub( res,'',str)
 
 print(res)

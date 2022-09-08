@@ -647,63 +647,6 @@ while flag:
 
                         add_to_statement_arrive(res_date, res_account_id, begin_date)
 
-                        # account_id = res_account_id[0]['account_id']
-                        # sql_get_product_type = 'SELECT product,belong,`type` from jm_statement.account_information WHERE id=%s'
-                        # product_type = mp.get_one(sql_get_product_type, [account_id])
-                        # product = product_type['product']
-                        # belong = product_type['belong']
-                        # account_type = product_type['type']
-                        # # 先查询该记录在实到表中是否存在（id,文件名，起止日期，状态都一样），如果已存在，则不做操作，不存在则新增
-                        # # sql_query = 'SELECT file_name FROM jm_statement.statement_arrive WHERE id=%s AND start_date=%s AND end_date=%s AND file_name=%s AND `status`=%s'
-                        # # res_arrived = mp.get_one(sql_query, [account_id, res_date, res_date, file_or_rar, 1])
-                        # # if res_arrived is None:
-                        # #     sql_add = 'INSERT into statement_arrive (`id`,`start_date`,`end_date`,`file_name`,`status`) VALUES (%s,%s,%s,%s,1)'
-                        # #     mp.modify(sql_add, [account_id, res_date, res_date, file_or_rar])
-                        # # else:
-                        # #     pass
-                        # # 把对账单拷贝到按产品分类和按券商分类，然后给对账单原始未知文件名前加上已处理_
-                        # # 对应的券商信息表id，源对账单目录，源对账单文件名，对账单开始日期，对账单结束日期，目标对账单目录1 ，目标对账单目录2，目标对账单文件名，处理日期和时间，是否有效
-                        # # if '-' in res_date
-                        # if '-' in res_date:
-                        #     res_date = ''.join(res_date.split('-'))
-                        # if '/' in res_date:
-                        #     res_date = ''.join(res_date.split('/'))
-                        # origin_path_parent = os.path.join(settings['origin_path'], institution)
-                        # origin_path = os.path.join(origin_path_parent, file_or_rar)
-                        # target_path_by_product = os.path.join(settings['target_path'], '交易日' + res_date, '对账单按产品整理',
-                        #                                       product, belong + account_type)
-                        # target_path_by_institution = os.path.join(settings['target_path'], '交易日' + res_date, '对账单按券商整理',
-                        #                                           belong + account_type, product)
-                        # if not file_or_rar.startswith('已处理'):
-                        #     res_pro = rename_to_new_dir(origin_path, target_path_by_product, file_or_rar, 1, True)
-                        #     res_ins = rename_to_new_dir(origin_path, target_path_by_institution, file_or_rar, 1, True)
-                        #     current_time = datetime.datetime.now()
-                        #     if res_pro.num > 0:
-                        #         # 则把这个数减去1后的对账单目标目录的记录改成无效，并写入新增修改后的目标目录到数据库arrive
-                        #         if res_pro.num - 1 == 0:
-                        #             sql_update_target_filename = 'UPDATE statement_arrive SET `status` = %s WHERE id = %s AND target_file_name = %s '
-                        #             mp.modify(sql_update_target_filename, [0, account_id, file_or_rar])
-                        #             print('把原来样子的文件名改成无效，把**（1）.txt的目标文件名写入数据库')
-                        #         else:
-                        #             sql_update_target_filename = 'UPDATE statement_arrive SET `status` = %s WHERE id = %s AND target_file_name = %s '
-                        #             mp.modify(sql_update_target_filename, [0, account_id, res_pro.target_pre_file])
-                        #             print('把数据库中**（res_num_pro-1）.txt的目标文件名改为无效，把**（res_num_pro）写入数据库')
-                        #         # 把拷贝到target目录的文件写入数据库到达表
-                        #         sql_insert_target_filename = 'INSERT INTO statement_arrive (`id`,`origin_path`,`origin_file_name`,`start_date`,`end_date`,`target_path_product`,`target_path_institution`,`target_file_name`,`operate_time`,`status`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
-                        #         mp.create(sql_insert_target_filename,
-                        #                   [account_id, origin_path, file_or_rar, res_date, res_date,
-                        #                    target_path_by_product,
-                        #                    target_path_by_institution, res_pro.target_file, current_time, 1])
-                        #     else:
-                        #         # 直接把目标目录写入arrive表
-                        #         sql_insert_target_filename = 'INSERT INTO statement_arrive (`id`,`origin_path`,`origin_file_name`,`start_date`,`end_date`,`target_path_product`,`target_path_institution`,`target_file_name`,`operate_time`,`status`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
-                        #         mp.create(sql_insert_target_filename,
-                        #                   [account_id, origin_path, file_or_rar, res_date, res_date,
-                        #                    target_path_by_product,
-                        #                    target_path_by_institution, res_pro.target_file, current_time, 1])
-                        #     # 写完arrive表，准备把源目录下的相应文件改为已处理
-                        #
-                        #     rename_to_new_dir(origin_path, origin_path_parent, '已处理_' + file_or_rar, 2, True)
                     else:  # 在应到表中没有匹配到券商id，日志记录对账单文件名，康康是否应该配置新的应到对账单文件
                         # 文件内容的重命名，同时到更新到新目录
                         subject_words = '对账单文件名在应到表中未匹配'

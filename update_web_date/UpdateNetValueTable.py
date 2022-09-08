@@ -104,17 +104,22 @@ class UpdateNetValueTable():
         res_list = self.con.get_list(sql_get, None)
         store_list = list()
         for dic in res_list:
-            store_list.append([dic['日期'], dic['000300.SH'], dic['SPX.GI'], dic['HSI.HI'], dic['一年期定期存款利率']])
+            store_list.append([dic['日期'], dic['000300.SH'], dic['SPX.GI'],dic['000852.SH'], dic['HSI.HI'], dic['一年期定期存款利率']])
 
         sql_get_perfor = "SELECT * FROM `performance_base`"
         res_per_list = self.con.get_list(sql_get_perfor, None)
-        if len(res_per_list) > 0:
-            sql_del = "DELETE FROM `performance_base`"
-            self.con.modify(sql_del, None)
+        res_per_list_2 = self.gw_con.get_list(sql_get_perfor, None)
 
-        sql_insert_performance = "INSERT INTO `performance_base` (`base_date`,`hushen`,`biaopu`,`hengsheng`,`fixed_rate`) VALUES (%s,%s,%s,%s,%s)"
+        sql_del = "DELETE FROM `performance_base`"
+
+        if len(res_per_list) > 0:
+            self.con.modify(sql_del, None)
+        if len(res_per_list_2) > 0:
+            self.gw_con.modify(sql_del, None)
+        sql_insert_performance = "INSERT INTO `performance_base` (`base_date`,`hushen`,`biaopu`,`hengsheng`,`zhongzheng`,`fixed_rate`) VALUES (%s,%s,%s,%s,%s,%s)"
         com_batch = tuple(store_list)
         self.con.multiple_modify(sql_insert_performance, com_batch)
+        self.gw_con.multiple_modify(sql_insert_performance, com_batch)
 
     def update_netvalue_gw(self, local_table, map_tabel):
         """
@@ -168,6 +173,9 @@ if __name__ == '__main__':
     # 把wavezhou本地的大于网站表的最新日期的记录，增加操作到网站数据库
     for i in range(3):
         unvt.update_netvalue_gw(frequecy_table_list[i], frequecy_table_list[i] + '_gw')
+    unvt.update_performance_base()
+    unvt.con.close()
+
 
     # sql_get_list = 'SELECT * FROM `perday_netvalue` pn  WHERE pn.net_date = %s AND pn.product_code not in (SELECT `product_code` FROM `perday_netvalue_copy1`  WHERE `net_date` = %s  )'
     # res_dict_list = unvt.con.get_list(sql_get_list, ['2022-06-24', '2022-06-24'])
@@ -178,5 +186,5 @@ if __name__ == '__main__':
     # sql_insert = 'INSERT INTO `{}` (`net_date`,`product_code`,`product_name`,`net_value`) VALUES (%s,%s,%s,%s)'.format(
     #     'perday_netvalue_copy1')
     # unvt.con.multiple_modify(sql_insert, tuple(store_net_list))
-    # unvt.update_performance_base()
-    # unvt.con.close()
+
+

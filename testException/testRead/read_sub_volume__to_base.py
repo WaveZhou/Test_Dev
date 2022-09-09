@@ -181,7 +181,7 @@ for row in range(int_tuple[0]):
                              Equity_information])
                 else:
                     #print("科目代码的上级科目，用券商代码和它去查询映射表。结果集记录等于1，直接靠Map_type的映射来处理。如果大于1，则参考估值表上的科目名称或科目代码信息")
-                    sql_get_code_and_name = "SELECT pm.`Ins_sub_code`,pm.`Map_type`,pm.`Map_jss_id`,js.`Subject_code`,js.`Subject_name`,js.`Subject_type` FROM `jm_subject_system` js LEFT JOIN `pro_subject_map` pm ON js.Id=pm.Map_jss_id WHERE pm.Ins_code=%s AND pm.Ins_sub_code like %s"
+                    sql_get_code_and_name = "SELECT pm.`Ins_sub_code`,pm.`Map_type`,pm.`Map_jss_id`,js.`Subject_code`,js.`Subject_name`,js.`Subject_type` FROM `jm_subject_system` js LEFT JOIN `pro_subject_map` pm ON js.Id=pm.Map_jss_id WHERE pm.Ins_code=%s AND pm.Ins_sub_code like %s ORDER BY pm.`Id`"
                     print(data_frame.iloc[row, 0])
                     tg_sub_code = str(data_frame.iloc[row, 0])
                     match_sub_code = tg_sub_code.split('.')[-1]
@@ -189,6 +189,8 @@ for row in range(int_tuple[0]):
                     result_list = mp.get_list(sql_get_code_and_name, ['021', match_code+'%%'])
                     print("数量是：=========》",len(result_list))
                     if len(result_list) > 1:
+                        if 'HH' in data_frame.iloc[row,0]:
+                            continue
                         for ele in result_list:
                             if match_sub_code[0:2] in ele['Ins_sub_code'] and 'QX' not in ele['Ins_sub_code']:
                                 print(match_sub_code+"映射的是这行记录"+ele['Ins_sub_code'],end=":")
@@ -206,9 +208,8 @@ for row in range(int_tuple[0]):
                             elif match_sub_code[0:2] in ele['Ins_sub_code'] and 'QX' in ele['Ins_sub_code']:
                                 print("计息的期权或期货账户类型============================》》》》》》》》》》》》》》》》》》》》》》》》")
 
-                            elif ele['Map_type'] == '04' and 'HH' not in data_frame.iloc[row,0]:
-                                print( data_frame.iloc[row,0])
-                                print( data_frame.iloc[row, 1])
+                            elif ele['Map_type'] == '04' and str(data_frame.iloc[row,0]).split('.')[1] not in ele['Ins_sub_code']:
+
                                 #存出保证金普通账户映射
                                 ins_account_info_list = get_all_match_info('SN0910', data_frame.iloc[row, 1],ele['Map_type'])
                                 wait_replaced_list = [ele['Subject_code'], ele['Subject_name']]
@@ -221,7 +222,35 @@ for row in range(int_tuple[0]):
                                      Equity_information]
                                 )
                                 break
+                            elif ele['Map_type'] == '04':
+                                print(data_frame.iloc[row, 0])
+                                print(data_frame.iloc[row, 1])
+                                # 存出保证金普通账户利息映射
+                                ins_account_info_list = get_all_match_info('SN0910', data_frame.iloc[row, 1], ele['Map_type'])
+                                wait_replaced_list = [ele['Subject_code'], ele['Subject_name']]
+                                res_store_list = replace_all_match_mark(wait_replaced_list, ins_account_info_list)
+                                wait_to_insert_list.append(
+                                    ['2022-08-25', 'SN0910', res_store_list[0], res_store_list[1], Currency,
+                                     Exchange_rate, Quantity, Unit_cost, Cost_currency, Cost_proportion, Quotation,
+                                     Market_currency_value,
+                                     Market_value_proportion, Valuation_appreciation, Suspension_information,
+                                     Equity_information]
+                                )
+                                break
                     elif len(result_list) == 1:
+                        if result_list[0]['Map_type'] == '04':
+                            # 存出保证金普通账户利息映射
+                            ele = result_list[0]
+                            ins_account_info_list = get_all_match_info('SN0910', data_frame.iloc[row, 1],  ele['Map_type'])
+                            wait_replaced_list = [ele['Subject_code'], ele['Subject_name']]
+                            res_store_list = replace_all_match_mark(wait_replaced_list, ins_account_info_list)
+                            wait_to_insert_list.append(
+                                ['2022-08-25', 'SN0910', res_store_list[0], res_store_list[1], Currency,
+                                 Exchange_rate, Quantity, Unit_cost, Cost_currency, Cost_proportion, Quotation,
+                                 Market_currency_value,
+                                 Market_value_proportion, Valuation_appreciation, Suspension_information,
+                                 Equity_information]
+                            )
                         if result_list[0]['Subject_type'] == '04':
                             ele = result_list[0]
                             wait_replaced_list = [result_list[0]['Subject_code'],result_list[0]['Subject_name']]
@@ -238,6 +267,7 @@ for row in range(int_tuple[0]):
                             ele = result_list[0]
                             wait_replaced_list = [ele['Subject_code'],ele['Subject_name']]
                             self_funds_code_and_name = get_all_match_info('SN09610',data_frame.iloc[row,1],ele['Map_type'],ele['Subject_type'])
+
                     else:
                         pass
                         #raise RuntimeError('估值表上存在映射关系表中没有存储的科目记录')
@@ -259,8 +289,9 @@ for ele in wait_to_insert_list:
     date_format = datetime.datetime.strptime(ele[0],'%Y-%m-%d').date()
     res_exist_id = mp.get_one(sql_get_is_exist,[date_format,ele[1],ele[2]])
     if res_exist_id is not None:
-        sql_delete = "DELETE FROM `pro_subject_volume` WHERE `Date`=%s AND `Pro_code`=%s AND `Sub_code`=%s"
-        mp.modify(sql_delete,[date_format,ele[1],ele[2]])
+        sql_delete = "DELETE FROM `pro_subject_volume` WHERE `Date`=%s AND `Pro_code`=%s"
+        mp.modify(sql_delete,[date_format,ele[1]])
+        break
 
 insert_batch_sql = "INSERT INTO `pro_subject_volume` (`Date`,`Pro_code`,`Sub_code`,`Sub_name`,`Currency`,`Exchange_rate`,`Quantity`,`Unit_cost`,`Cost_currency`," \
                    "`Cost_proportion`,`Quotation`,`Market_currency_value`,`Market_value_proportion`,`Valuation_appreciation`,`Suspension_information`,`Equity_information`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"

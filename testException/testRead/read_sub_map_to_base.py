@@ -6,7 +6,7 @@ from utils.MysqlProxy import MysqlProxy
 
 if __name__ == '__main__':
     base_dir = r'D:\Users\Administrator\AppData\Local\Programs\PycharmWorkSpace\Test_Dev\testException\origin'
-    file_name = '科目映射关系(5).xlsx'
+    file_name = '科目映射关系(6).xlsx'
     data_frame = pd.read_excel(os.path.join(base_dir, file_name))
     print(data_frame)
     rows_int = data_frame.index.T.shape[0]
@@ -25,7 +25,11 @@ if __name__ == '__main__':
         map_jm_subject_code = data_frame.iloc[row,3] if not data_frame.isnull().iloc[row,3] else None
         # 准备去获取code
         ins_code = mp.get_one(sql_get_ins_code,[ins_sim_name])['Ins_code']
-        map_type_code = mp.get_one(sel_get_map_type_value,[map_type_key])['ParaValue']
+        try:
+            map_type_code = mp.get_one(sel_get_map_type_value,[map_type_key])['ParaValue']
+        except TypeError:
+            print(ins_sim_name,subject_code)
+            raise Exception
         TEMP = mp.get_one(sql_get_jss_id,[map_jm_subject_code])
         jss_id = mp.get_one(sql_get_jss_id,[map_jm_subject_code])['Id'] if mp.get_one(sql_get_jss_id,[map_jm_subject_code]) is not None else None
         store_list.append([ins_code,subject_code,map_type_code,jss_id])

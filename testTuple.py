@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
 
-tuple1 = ("日期1", '分类账户1')
-file_name1 = '甲'
-
-tuple2 = ("日期2", '分类账户2')
-file_name2 = '已'
-
-dict = dict()
-dict[file_name1] = tuple1
-dict[file_name2] = tuple2
-
-for filename, tuple in dict.items():
-    print(filename, end="==========")
-    print(tuple)
+# tuple1 = ("日期1", '分类账户1')
+# file_name1 = '甲'
+#
+# tuple2 = ("日期2", '分类账户2')
+# file_name2 = '已'
+#
+# dict = dict()
+# dict[file_name1] = tuple1
+# dict[file_name2] = tuple2
+#
+# for filename, tuple in dict.items():
+#     print(filename, end="==========")
+#     print(tuple)
 
 
 # class Person(object):
@@ -25,3 +25,7 @@ for filename, tuple in dict.items():
 #         self.age = 26
 
 
+str = '1000.1'
+res = str.split('.')[0]
+print(res)
+print(len(res))

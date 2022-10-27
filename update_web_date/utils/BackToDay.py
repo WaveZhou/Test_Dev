@@ -55,8 +55,8 @@ class BackToDay(object):
 
 
 if __name__ == '__main__':
-    accord_day = datetime.date(2022, 6, 5)
-    pt = BackToDay(2, accord_day)
+    accord_day = datetime.date(2022, 10, 14)
+    pt = BackToDay(5, accord_day)
     print(pt.primary())
     day = datetime.date.strftime(pt.to_day[0]['date'], "%Y-%m-%d")
     print(day)

@@ -162,11 +162,22 @@ class UpdateNetValueTable():
 
 
 if __name__ == '__main__':
-    dict_obj_input = {}
-    dict_obj_wz = {}
     frequecy_table_list = ['perday_netvalue', 'perweek_netvalue', 'permonth_netvalue']
     unvt = UpdateNetValueTable(dict_obj_input, dict_obj_wz)
+    # daochu_list = ['稳健22号','全球1号','稳健6号','久铭2号','久铭3号','收益1号','稳利2号','稳健9号']
+    # import openpyxl
+    # wb = openpyxl.Workbook()
+    # sheet = wb.active
+    # sheet.title = '模板产品净值信息'
     for i in range(3):
+        # if i == 0:
+        #     origin_list = unvt.get_origin_net_value_list(i)
+        #     format_list = unvt.get_format_frequecey_net_value_list(origin_list)
+        #     for ele in format_list:
+        #         if ele[2] in daochu_list and ele[3] is not None:
+        #             sheet.append([ele[2],ele[0],ele[3],ele[3]])
+        #     wb.save("产品模板净值信息.xlsx")
+        #     break
         origin_list = unvt.get_origin_net_value_list(i)
         format_list = unvt.get_format_frequecey_net_value_list(origin_list)
         unvt.update_net_value_tabel(format_list, frequecy_table_list[i])

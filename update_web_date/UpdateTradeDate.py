@@ -2,7 +2,7 @@ import pymysql
 from WindPy import *
 
 w.start();
-a = w.tdays("2016-01-01","2024-01-01").Times;
+a = w.tdays("2016-01-01","2026-01-01").Times;
 b = 0
 
 

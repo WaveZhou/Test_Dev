@@ -491,7 +491,7 @@ if __name__ == '__main__':
     import pickle,schedule,time
     def job():
         #SINCE_DATE = datetime.date(2021, 11, 1)
-        SINCE_DATE = datetime.date.today() - datetime.timedelta(days=5)
+        SINCE_DATE = datetime.date.today() - datetime.timedelta(days=30)
         settings = {
             'mail_bit_path': r'D:\估值专用邮箱数据\久铭\邮件IMAP二进制缓存',
             'mail_content_path': r'D:\估值专用邮箱数据\久铭\邮件IMAP解码数据缓存',
@@ -535,7 +535,8 @@ if __name__ == '__main__':
         )
 
         loader.log.info_running('本次运行结束', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-    schedule.every(1).hour.do(job)
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
+    job()
+    # schedule.every(1).hour.do(job)
+    # while True:
+    #     schedule.run_pending()
+    #     time.sleep(1)

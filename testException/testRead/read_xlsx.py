@@ -7,7 +7,8 @@ from testException.utils.MysqlProxy import MysqlProxy
 base_dir = r'D:\Users\Administrator\AppData\Local\Programs\PycharmWorkSpace\Test_Dev\testException\origin'
 
 # df = pd.read_excel(os.path.join(base_dir, '210000420.xlsx'))
-# df = pd.read_excel(os.path.join(base_dir,'机构信息表.xlsx'))
+df = pd.read_excel(os.path.join(base_dir,'机构信息表.xlsx'))
+
 #
 # data_code = df.iloc[0,0]
 # data_ins = df.iloc[0,1]
@@ -26,7 +27,7 @@ store_list = list()
 # mp.multiple_modify(sql,tuple(store_list))
 
 
-df = pd.read_excel(os.path.join(base_dir, '产品科目体系信息(1).xlsx'))
+df = pd.read_excel(os.path.join(base_dir, '产品科目体系信息.xlsx'))
 
 Map_Collection = dict()
 Map_Collection['否'] = None
@@ -99,6 +100,8 @@ map_Subject['券商账户号型科目'] = '03'
 map_Subject['证券代码型科目'] = '04'
 map_Subject['自营产品型科目'] = '05'
 map_Subject['机构证券代码型科目'] = '06'
+map_Subject['佣金费用型科目'] = '07'
+map_Subject['机构证券清算型科目'] = '08'
 for i in range(df.index.T.shape[0]):
     subject_code = df.iloc[i, 0]
     subject_name = df.iloc[i, 1]
